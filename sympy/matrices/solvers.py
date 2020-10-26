@@ -1,10 +1,16 @@
 from sympy.core.function import expand_mul
+from sympy.core.numbers import mod_inverse
 from sympy.core.symbol import Dummy, _uniquely_named_symbol, symbols
 from sympy.utilities.iterables import numbered_symbols
 
 from .common import ShapeError, NonSquareMatrixError, NonInvertibleMatrixError
 from .eigen import _fuzzy_positive_definite
 from .utilities import _get_intermediate_simp, _iszero
+
+
+def mod(x, modulus):
+    numer, denom = x.as_numer_denom()
+    return numer*mod_inverse(denom, modulus) % modulus
 
 
 def _diagonal_solve(M, rhs):
