@@ -2382,7 +2382,7 @@ def linear_eq_to_matrix(equations, *symbols):
     return A, b
 
 
-def linsolve(system, *symbols):
+def linsolve(system, *symbols, **params):
     r"""
     Solve system of N linear equations with M variables; both
     underdetermined and overdetermined systems are supported.
@@ -2593,7 +2593,8 @@ def linsolve(system, *symbols):
             ''' % symbols[0].name.rstrip('1234567890')))
 
     try:
-        solution, params, free_syms = A.gauss_jordan_solve(b, freevar=True)
+        order = params.get('order', 0)
+        solution, params, free_syms = A.gauss_jordan_solve(b, freevar=True, order=order)
     except ValueError:
         # No solution
         return S.EmptySet

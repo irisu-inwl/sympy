@@ -2,8 +2,14 @@
 
 
 from sympy.core import S
+from sympy.core.numbers import mod_inverse
 from sympy.matrices.common import ShapeError
 from sympy.matrices.dense import MutableDenseMatrix
+
+
+def mod(x, modulus):
+    numer, denom = x.as_numer_denom()
+    return numer*mod_inverse(denom, modulus) % modulus
 
 
 class NewMatrix(MutableDenseMatrix):
@@ -42,14 +48,18 @@ class NewMatrix(MutableDenseMatrix):
         newmat[self.rows:, :] = bott
         return type(self)(newmat)
 
-    def gauss_jordan_solve(self, b, freevar=False):
+    def gauss_jordan_solve(self, b, freevar=False, order=0):
         from sympy.matrices import Matrix
 
         aug = self.hstack(self.copy(), b.copy())
         row, col = aug[:, :-1].shape
 
         # solve by reduced row echelon form
-        A, pivots = aug.rref()
+        if order == 0:
+            A, pivots = aug.rref()
+        elif order >= 1:
+            A, pivots = aug.rref(iszerofunc=lambda x: x % order==0)
+            A = A.applyfunc(lambda x: mod(x, order))
         A, v = A[:, :-1], A[:, -1]
         pivots = list(filter(lambda p: p < col, pivots))
         rank = len(pivots)
