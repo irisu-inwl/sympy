@@ -2208,8 +2208,8 @@ class MatrixBase(MatrixDeprecated,
     def QRsolve(self, b):
         return _QRsolve(self, b)
 
-    def gauss_jordan_solve(self, B, freevar=False):
-        return _gauss_jordan_solve(self, B, freevar=freevar)
+    def gauss_jordan_solve(self, B, freevar=False, order=0):
+        return _gauss_jordan_solve(self, B, freevar=freevar, order=0)
 
     def pinv_solve(self, B, arbitrary_matrix=None):
         return _pinv_solve(self, B, arbitrary_matrix=arbitrary_matrix)

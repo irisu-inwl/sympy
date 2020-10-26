@@ -425,7 +425,7 @@ def _QRsolve(M, b):
     return M._new([row._mat for row in reversed(x)])
 
 
-def _gauss_jordan_solve(M, B, freevar=False):
+def _gauss_jordan_solve(M, B, freevar=False, order=0):
     """
     Solves ``Ax = B`` using Gauss Jordan elimination.
 
@@ -536,7 +536,11 @@ def _gauss_jordan_solve(M, B, freevar=False):
     row, col = aug[:, :-B_cols].shape
 
     # solve by reduced row echelon form
-    A, pivots = aug.rref(simplify=True)
+    if order == 0:
+        A, pivots = aug.rref(simplify=True)
+    elif order >= 1:
+        A, pivots = aug.rref(simplify=True, iszerofunc=lambda x: x % order==0)
+        A = A.applyfunc(lambda x: mod(x, order))
     A, v      = A[:, :-B_cols], A[:, -B_cols:]
     pivots    = list(filter(lambda p: p < col, pivots))
     rank      = len(pivots)
